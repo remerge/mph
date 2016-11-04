@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stretchrcom/testify/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -55,6 +55,29 @@ func TestCHDBuilder(t *testing.T) {
 		assert.Equal(t, []byte(v), c.Get([]byte(k)))
 	}
 	assert.Nil(t, c.Get([]byte("monkey")))
+}
+
+func TestCHDRandomValue(t *testing.T) {
+	b := Builder()
+	for k, v := range sampleData {
+		b.Add([]byte(k), []byte(v))
+	}
+	c, err := b.Build()
+	assert.NoError(t, err)
+	assert.Equal(t, 7, len(c.keys))
+	for i := 0; i < 5; i++ {
+		_, found := sampleData[string(c.GetRandomKey())]
+		assert.True(t, found)
+	}
+	values := make(map[string]struct{})
+	for _, v := range sampleData {
+		values[v] = struct{}{}
+	}
+	for i := 0; i < 5; i++ {
+		_, found := values[string(c.GetRandomValue())]
+		assert.True(t, found)
+	}
+
 }
 
 func TestCHDSerialization(t *testing.T) {

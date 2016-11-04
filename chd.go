@@ -34,6 +34,7 @@ import (
 	"encoding/binary"
 	"io"
 	"io/ioutil"
+	"math/rand"
 )
 
 // CHD hash table lookup.
@@ -93,6 +94,22 @@ func Mmap(b []byte) (*CHD, error) {
 	}
 
 	return c, nil
+}
+
+// Get a random entry from the hash table
+func (c *CHD) GetRandomValue() []byte {
+	if len(c.keys) == 0 {
+		return nil
+	}
+	return c.values[rand.Intn(len(c.keys))]
+}
+
+// Get a random entry from the hash table
+func (c *CHD) GetRandomKey() []byte {
+	if len(c.keys) == 0 {
+		return nil
+	}
+	return c.keys[rand.Intn(len(c.keys))]
 }
 
 // Get an entry from the hash table.
